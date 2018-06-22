@@ -1,0 +1,4 @@
+INFO:__main__:..........Start parse_travel.py..................
+INFO:__main__:create vocabulary -->  return vocabulary words in a set
+INFO:__main__:run parse_sentense to get all the dependency paths between nouns in the sentence
+INFO:__main__:run parse_sentense to get all the dependency paths between nouns in the sentence
