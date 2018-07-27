@@ -1,8 +1,8 @@
 import codecs
 import logging
+import spacy
 
 from docopt import docopt
-from spacy.en import English
 from collections import defaultdict
 
 logging.basicConfig(filename='Travel_Project_log', level=logging.DEBUG)
@@ -23,7 +23,7 @@ def main():
             <out_file> = the output file
         """)
 
-    nlp = English()
+    nlp = spacy.load('en')
 
     travel_file = args['<travel_file>']
     vocabulary_file = args['<vocabulary_file>']
@@ -190,7 +190,7 @@ def heads(token):
     """
     t = token
     hs = []
-    while t is not t.head:
+    while t != t.head:
         t = t.head
         hs.append(t)
     return hs[::-1]
