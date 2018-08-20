@@ -2,17 +2,15 @@ import sys
 import argparse
 
 ap = argparse.ArgumentParser()
-ap.add_argument('-g', '--gpus', help='number of gpus to use [0,1], default=0', type=int, default=0, choices=[0,1])
-ap.add_argument('-m', '--memory', help='set dynet memory, default 8192',  default=8192)
-ap.add_argument('-s', '--seed', help='dynet random seed, pick any integer you like, default=3016748844', default=3016748844)
-ap.add_argument('--num_hidden_layers', help='number of hidden layers to use', type=int, default=0)
-ap.add_argument('--num_epochs', help='number of epochs to train', type=int, default=5)
+
 ap.add_argument('corpus_prefix', help='path to the corpus resource')
 ap.add_argument('dataset_prefix', help='path to the train/test/val/rel data')
 ap.add_argument('model_prefix_file', help='where to store the result')
 ap.add_argument('embeddings_file', help='path to word embeddings file')
 
 args = ap.parse_args()
+
+sys.path.append('../common/')
 
 from lstm_common import *
 from itertools import count
@@ -116,19 +114,6 @@ def main():
     precision, recall, f1, support = evaluate(y_test, pred, relations, do_full_reoprt=True)
     print 'Precision: %.3f, Recall: %.3f, F1: %.3f' % (precision, recall, f1)
 
-    # Write the predictions to a file
-    output_predictions(args.model_prefix_file + '.predictions', relations, pred, test_set.keys(), y_test)
-
-    # Retrieve k-best scoring paths for each class
-    all_paths = unique([path for path_list in dataset_instances for path in path_list])
-    top_k = classifier.get_top_k_paths(all_paths, relation_index, 0.7)
-
-    for i, relation in enumerate(relations):
-        with codecs.open(args.model_prefix_file + '.paths.' + relation, 'w', 'utf-8') as f_out:
-            for path, score in top_k[i]:
-                path_str = '_'.join([reconstruct_edge(edge, lemma_inverted_index, pos_inverted_index,
-                                                      dep_inverted_index, dir_inverted_index) for edge in path])
-                print >> f_out, '\t'.join([path_str, str(score)])
 
 
 def get_vocabulary(corpus, dataset_keys):
